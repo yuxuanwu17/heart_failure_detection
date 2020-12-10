@@ -6,16 +6,17 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 
-def feature_plot(classifier, feature_names, top_features=6):
+def feature_plot(classifier, feature_names, top_features=5):
     coef = classifier.coef_.ravel()
     top_positive_coefficients = np.argsort(coef)[-top_features:]
     top_negative_coefficients = np.argsort(coef)[:top_features]
-    top_coefficients = np.hstack([top_negative_coefficients, top_positive_coefficients])
+    middle_coefficient = np.argsort(coef)[top_features]
+    top_coefficients = np.hstack([top_negative_coefficients, middle_coefficient, top_positive_coefficients])
     plt.figure(figsize=(18, 7))
     colors = ['green' if c < 0 else 'blue' for c in coef[top_coefficients]]
-    plt.bar(np.arange(2 * top_features), coef[top_coefficients], color=colors)
+    plt.bar(np.arange(2 * top_features+1), coef[top_coefficients], color=colors)
     feature_names = np.array(feature_names)
-    plt.xticks(np.arange(2 * top_features), feature_names[top_coefficients], rotation=45, ha='right')
+    plt.xticks(np.arange(2 * top_features+1), feature_names[top_coefficients], rotation=45, ha='right')
 
     plt.show()
 
