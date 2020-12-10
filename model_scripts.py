@@ -8,6 +8,7 @@ import seaborn as sn
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import StandardScaler
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
 from sklearn.ensemble import GradientBoostingClassifier
@@ -22,32 +23,29 @@ heart_data.head()
 accuracy_list = []
 
 X = heart_data.iloc[:, 0:11]
+X = StandardScaler().fit_transform(X)
 y = heart_data['DEATH_EVENT']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, shuffle=True, random_state=1)
 
-sv_clf = SVC()
+sv_clf = SVC(kernel="linear",random_state=1)
 sv_clf.fit(X_train, y_train)
 sv_clf_pred = sv_clf.predict(X_test)
 sv_clf_acc = accuracy_score(y_test, sv_clf_pred)
-sc_clf_f1 = f1_score(y_test, sv_clf_pred)
-sc_clf_recall = recall_score(y_test, sv_clf_pred)
-sc_clf_precision = precision_score(y_test, sv_clf_pred)
+# sc_clf_f1 = f1_score(y_test, sv_clf_pred)
+# sc_clf_recall = recall_score(y_test, sv_clf_pred)
+# sc_clf_precision = precision_score(y_test, sv_clf_pred)
+
+sv_clf_default = SVC(random_state=1)
+sv_clf_default.fit(X_train, y_train)
+sv_clf_pred_default = sv_clf_default.predict(X_test)
+sv_clf_acc_default = accuracy_score(y_test, sv_clf_pred_default)
+
 
 accuracy_list.append(round(sv_clf_acc, 2))
-accuracy_list.append(round(sc_clf_f1, 2))
-accuracy_list.append(round(sc_clf_recall, 2))
-accuracy_list.append(round(sc_clf_precision, 2))
+accuracy_list.append(round(sv_clf_acc_default, 2))
+# accuracy_list.append(round(sc_clf_f1, 2))
+# accuracy_list.append(round(sc_clf_recall, 2))
+# accuracy_list.append(round(sc_clf_precision, 2))
 
 print(accuracy_list)
 
-# print(sv_clf_acc)
-
-# ## plot the confusion matrix
-# cm = confusion_matrix(y_test, sv_clf_pred)
-plt.figure()
-plot_confusion_matrix(sv_clf, X_test, y_test)
-# plot_confusion_matrix(y_test,sv_clf_pred)
-plt.title("SVC Model - Confusion Matrix")
-# plt.xticks(range(2), ["Heart Not Failed", "Heart Fail"], fontsize=16)
-# plt.yticks(range(2), ["Heart Not Failed", "Heart Fail"], fontsize=16)
-plt.show()
