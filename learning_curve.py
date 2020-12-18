@@ -23,7 +23,8 @@ def main():
     model = SVC(kernel='rbf', random_state=1, C=10, gamma=0.01)
     model.fit(X_train, y_train)
 
-    train_size, train_acc, test_acc = learning_curve(model, X_train, y_train, cv=5)
+    loo = LeaveOneOut()
+    train_size, train_acc, test_acc = learning_curve(model, X_train, y_train, cv=loo)
     learn_df = pd.DataFrame({"Train_size": train_size, "Train_Accuracy": train_acc.mean(axis=1),
                              "Test_Accuracy": test_acc.mean(axis=1)}).melt(id_vars="Train_size")
     sns.lineplot(x="Train_size", y="value", data=learn_df, hue="variable")
